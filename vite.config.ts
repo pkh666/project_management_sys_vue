@@ -124,4 +124,13 @@ export default defineConfig({
     assetsDir: "assets", //静态资源目录
     emptyOutDir: true, //清空打包目录
   },
+  server:{
+    proxy:{
+       '/api':{
+           target:"http://localhost:8099/", //跨域地址
+           changeOrigin:true, //支持跨域
+           rewrite:(path) => path.replace(/^\/api/, "")//重写路径,替换/api
+       }
+    }
+ }
 });
