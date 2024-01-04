@@ -20,37 +20,51 @@ const routes: Array<RouteRecordRaw> = [
         meta: { requiresAuth: false, breadcrumb: "首页" }, //requiresAuth意思是是否需要登录才能访问
       },
       {
-        path: "import",
-        name: "信息导入",
-        meta: { requiresAuth: false, breadcrumb: "信息导入" },
+        path: "myProject",
+        name: "我的项目",
+        component: () => import("../views/MyProject/index.vue"),
+        meta: { requiresAuth: false, breadcrumb: "我的项目" },
+      },
+      {
+        path: "myProject",
         children: [
           {
-            path: "material",
-            name: "物料",
-            component: () => import("../views/Import/material/material.vue"),
-            meta: { requiresAuth: false, breadcrumb: "物料" },
+            path: "overview",
+            name: "项目概览",
+            component: () => import("../views/MyProject/Overview/index.vue"),
+            meta: { requiresAuth: false, breadcrumb: "项目概览" },
           },
-          // 添加其他信息导入的子菜单路由...
-        ],
+          {
+            path: "task",
+            name: "任务列表",
+            component: () => import("../views/MyProject/Task/index.vue"),
+            meta: { requiresAuth: false, breadcrumb: "任务列表" },
+          },
+          {
+            path: "fileManagement",
+            name: "文件管理",
+            component: () => import("../views/MyProject/FileManagement/index.vue"),
+            meta: { requiresAuth: false, breadcrumb: "文件管理" },
+          },
+          {
+            path: "team",
+            name: "团队情况",
+            component: () => import("../views/MyProject/Team/index.vue"),
+            meta: { requiresAuth: false, breadcrumb: "团队情况" },
+          },
+        ]
       },
       {
-        path: "publish",
-        name: "发布任务",
-        component: () => import("../views/Publish/index.vue"),
-        meta: { requiresAuth: false, breadcrumb: "发布任务" },
-      },
-
-      {
-        path: "roleManage",
-        name: "用户管理",
-        component: () => import("../views/RoleManage/index.vue"),
-        meta: { requiresAuth: false, breadcrumb: "用户管理" },
+        path: "myInfo",
+        name: "我的信息",
+        component: () => import("../views/MyInfo/index.vue"),
+        meta: { requiresAuth: false, breadcrumb: "我的信息" },
       },
       {
-        path: "role",
-        name: "角色管理",
-        component: () => import("../views/Role/role.vue"),
-        meta: { requiresAuth: false, breadcrumb: "角色管理" },
+        path: "invitations",
+        name: "邀请信息",
+        component: () => import("../views/Invitations/index.vue"),
+        meta: { requiresAuth: false, breadcrumb: "邀请信息" },
       },
       {
         path: "/:pathMatch(.*)",

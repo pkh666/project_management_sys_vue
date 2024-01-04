@@ -2,83 +2,68 @@
   <div class="main_container">
     <div class="logo">
       <img class="img" src="@assets/layouts/logo.svg" alt="" />
-      <h2 class="title">后台管理系统</h2>
+      <h2 class="title">项目管理系统</h2>
     </div>
 
     <div class="menue">
-      <el-menu
-        :default-active="$route.path"
-        class="el-menu-vertical-demo"
-        :collapse="isCollapse"
-        text-color="#b7bdc3"
-        active-text-color="#fff"
-        background-color="#001529"
-        :unique-opened="true"
-        collapse-transition="false"
-        router
-      >
+      <el-menu :default-active="$route.path" class="el-menu-vertical-demo" :collapse="isCollapse" text-color="#b7bdc3"
+        active-text-color="#fff" background-color="#001529" :unique-opened="true" collapse-transition="false" router>
         <el-menu-item index="/home" @click="cleanTag">
           <el-icon>
             <HomeFilled />
           </el-icon>
-          <template #title>首页</template>
+          <template #title>工作台</template>
         </el-menu-item>
 
-        <el-sub-menu index="/import" v-model="isImportMenuOpen">
+        <el-menu-item index="/myProject">
+          <el-icon>
+            <Document />
+          </el-icon>
+          <template #title>我的项目</template>
+        </el-menu-item>
+
+        <el-sub-menu index="/myProject" v-model="isMyProjectMenuOpen">
           <template #title>
             <el-icon>
               <BottomLeft />
             </el-icon>
-            <span>信息导入</span>
+            <span>项目详情</span>
           </template>
-          <el-menu-item
-            class="itemMenu"
-            index="/import/material"
-            @click="addTag({ label: '物料', path: 'import/material' })"
-          >
-            <template #title>物料</template>
+          <el-menu-item class="itemMenu" index="/myProject/overview"
+            @click="addTag({ label: '项目概览', path: '/myProject/overview' })">
+            <template #title>项目概览</template>
+          </el-menu-item>
+          <el-menu-item class="itemMenu" index="/myProject/task"
+            @click="addTag({ label: '任务列表', path: '/myProject/task' })">
+            <template #title>任务列表</template>
+          </el-menu-item>
+          <el-menu-item class="itemMenu" index="/myProject/fileManagement"
+            @click="addTag({ label: '文件管理', path: '/myProject/fileManagement' })">
+            <template #title>文件管理</template>
+          </el-menu-item>
+          <el-menu-item class="itemMenu" index="/myProject/team"
+            @click="addTag({ label: '团队情况', path: '/myProject/team' })">
+            <template #title>团队情况</template>
           </el-menu-item>
         </el-sub-menu>
-        <el-menu-item
-          index="/publish"
-          @click="addTag({ label: '发布任务', path: 'publish' })"
-          v-model="isTaskMenuOpen"
-        >
-          <el-icon>
-            <document />
-          </el-icon>
-          <template #title>发布任务</template>
-        </el-menu-item>
 
-        <el-menu-item
-          index="/roleManage"
-          @click="addTag({ label: '用户管理', path: 'roleManage' })"
-        >
+        <el-menu-item index="/myInfo" @click="addTag({ label: '我的信息', path: 'myInfo' })">
           <el-icon>
             <setting />
           </el-icon>
-          <template #title>用户管理</template>
+          <template #title>我的信息</template>
         </el-menu-item>
-
-        <el-menu-item
-          index="/role"
-          @click="addTag({ label: '角色管理', path: 'role' })"
-        >
+        <el-menu-item index="/invitations" @click="addTag({ label: '邀请信息', path: 'invitations' })">
           <el-icon>
             <setting />
           </el-icon>
-          <template #title>角色管理</template>
+          <template #title>邀请信息</template>
         </el-menu-item>
       </el-menu>
     </div>
 
     <el-tooltip content="点击折叠" placement="right">
-      <div
-        size="default"
-        class="collapse_icon hidden-sm-and-down"
-        type="primary"
-        @click="collapseMenu()"
-      >
+      <div size="default" class="collapse_icon hidden-sm-and-down" type="primary" @click="collapseMenu()">
         <el-icon :color="'#0a60bd'">
           <Fold />
         </el-icon>
@@ -92,12 +77,12 @@ import { ref } from "vue";
 import { onMounted, onBeforeUnmount } from "vue";
 import { useMenuStore } from "@/store/menu";
 import { storeToRefs } from "pinia";
-import { Document, Setting } from "@element-plus/icons-vue";
+import { Setting } from "@element-plus/icons-vue";
 const menuStore = useMenuStore();
 const { addTag, cleanTag, closeMenu, collapseMenu } = menuStore;
 const { isCollapse } = storeToRefs(menuStore);
-const isImportMenuOpen = ref(false); // 信息导入菜单的展开状态
-const isTaskMenuOpen = ref(false); // 查看任务菜单的展开状态
+
+const isMyProjectMenuOpen = ref(false); // 我的项目菜单的展开状态
 
 const mediaQuery: MediaQueryList = window.matchMedia("(max-width: 768px)");
 
@@ -161,6 +146,7 @@ onBeforeUnmount(() => {
     white-space: nowrap;
   }
 }
+
 .el-menu .el-menu-item.is-active {
   color: #fff;
   background-color: #0a60bd;
@@ -172,6 +158,7 @@ onBeforeUnmount(() => {
   background-color: #001529;
   font-weight: bold;
 }
+
 .itemMenu {
   padding-left: 50px !important;
 }
