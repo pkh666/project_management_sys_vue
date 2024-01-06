@@ -2,15 +2,16 @@
     <div>
         <el-header>
             <el-row>
-                <el-col :span="1">
-                    团队情况
+                <el-col :span="2">
+                    <span style="color: black;">团队情况</span>
                 </el-col>
                 <el-col :span="6">
                     <el-button @click="handleMemberListClick">成员列表</el-button>
                     <el-button @click="handleTeacherListClick">指导老师列表</el-button>
                 </el-col>
                 <el-col :span="6">
-                    <el-input v-model="searchName" placeholder="输入姓名" class="search-input">
+                    <el-input v-model="searchName" placeholder="输入姓名" v-on:keyup.enter="handleSearchName"
+                        class="search-input">
                         <template #append>
                             <el-button @click="handleSearchName">搜索</el-button>
                         </template>
@@ -21,7 +22,7 @@
                         <el-form :model="addMemberForm">
                             <el-form-item label="姓名" :label-width="formLabelWidth">
                                 <el-select v-model="addMemberForm.name" placeholder="选择成员姓名">
-
+                                    <el-option v-for="name in memberOptionList" :key="name" :value="name" />
                                 </el-select>
                             </el-form-item>
                         </el-form>
@@ -36,7 +37,7 @@
                         <el-form :model="addTeacherForm">
                             <el-form-item label="姓名" :label-width="formLabelWidth">
                                 <el-select v-model="addTeacherForm.name" placeholder="选择指导老师姓名">
-
+                                    <el-option v-for="name in teacherOptionList" :key="name" :value="name" />
                                 </el-select>
                             </el-form-item>
                         </el-form>
@@ -81,34 +82,37 @@ const addTeacherForm = reactive({
     name: '',
 })
 
-const role = ref(0)
+const chosenRole = ref('0')
 const projectId = ref(20)
 const searchName = ref('')
 const memberList = ref([])
+const memberOptionList = ref(['c', 'd'])
+const teacherOptionList = ref(['A', 'B'])
 const xAxisName = ref(['张三', '李四'])
 const yAxisScore = ref([100, 200])
 
 const chartRef = ref()
 
 onMounted(() => {
+    initChart()
     getChartData()
-    getMemberList(1)
+    getMemberList(1, chosenRole.value)
 })
 
 const handleMemberListClick = () => {
-    role.value = 1
-    getMemberList(1)
+    chosenRole.value = '1'
+    getMemberList(1, chosenRole.value)
     getChartData()
 }
 
 const handleTeacherListClick = () => {
-    role.value = 0
-    getMemberList(1)
+    chosenRole.value = '0'
+    getMemberList(1, chosenRole.value)
     getChartData()
 }
 
 const handleSearchName = () => {
-    getMemberList(1)
+    getMemberList(1, chosenRole.value)
 }
 
 const handleAddMember = () => {
@@ -119,13 +123,13 @@ const handleAddTeacher = () => {
     addTeacherDialogVisible.value = true
 }
 
-const getMemberList = (pageNumber: number) => {
+const getMemberList = (pageNumber: number, role: string) => {
     axios.get("/api/member", {
         params: {
             projectId: projectId.value,
             memberName: searchName.value,
             pageNumber: pageNumber,
-            role: role.value,
+            role: role,
         }
     })
         .then(res => {
@@ -145,7 +149,6 @@ const getChartData = () => {
     })
         .then(res => {
             var chartData = res.data
-            console.log("chart data", chartData)
             var nameList = []
             var scoreList = []
             for (let i = 0; i < chartData.length; i++) {
@@ -157,12 +160,12 @@ const getChartData = () => {
         }).catch(err => {
             console.log(err)
         }).finally(() => {
-            initChart()
+            updateChart()
         })
 }
 
 const initChart = () => {
-    const myChart = echarts.init(chartRef.value)
+    var myChart = echarts.init(chartRef.value)
     myChart.setOption({
         xAxis: {
             data: xAxisName.value
@@ -180,6 +183,24 @@ const initChart = () => {
     window.onresize = () => {
         myChart.resize();
     }
+}
+
+const updateChart = () => {
+    var myChart = echarts.getInstanceByDom(chartRef.value)
+    myChart.setOption({
+        xAxis: {
+            data: xAxisName.value
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: [
+            {
+                type: 'bar',
+                data: yAxisScore.value
+            }
+        ]
+    })
 }
 </script>
   
