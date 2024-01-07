@@ -22,7 +22,8 @@
                         <el-form :model="addMemberForm">
                             <el-form-item label="姓名" :label-width="formLabelWidth">
                                 <el-select v-model="addMemberForm.name" placeholder="选择成员姓名">
-                                    <el-option v-for="name in memberOptionList" :key="name" :value="name" />
+                                    <el-option v-for="user in memberOptionList" :key="user.username"
+                                        :value="user.username" />
                                 </el-select>
                             </el-form-item>
                         </el-form>
@@ -37,7 +38,8 @@
                         <el-form :model="addTeacherForm">
                             <el-form-item label="姓名" :label-width="formLabelWidth">
                                 <el-select v-model="addTeacherForm.name" placeholder="选择指导老师姓名">
-                                    <el-option v-for="name in teacherOptionList" :key="name" :value="name" />
+                                    <el-option v-for="user in teacherOptionList" :key="user.username"
+                                        :value="user.username" />
                                 </el-select>
                             </el-form-item>
                         </el-form>
@@ -86,10 +88,10 @@ const chosenRole = ref('0')
 const projectId = ref(20)
 const searchName = ref('')
 const memberList = ref([])
-const memberOptionList = ref(['c', 'd'])
-const teacherOptionList = ref(['A', 'B'])
-const xAxisName = ref(['张三', '李四'])
-const yAxisScore = ref([100, 200])
+const memberOptionList = ref([])
+const teacherOptionList = ref([])
+const xAxisName = ref([''])
+const yAxisScore = ref([''])
 
 const chartRef = ref()
 
@@ -116,11 +118,31 @@ const handleSearchName = () => {
 }
 
 const handleAddMember = () => {
-    addMemberDialogVisible.value = true
+    axios.get("/api/user/all", {
+        params: {
+            role: '1',
+        }
+    }).then(res => {
+        memberOptionList.value = res.data.data
+    }).catch(err => {
+        console.log(err)
+    }).finally(() => {
+        addMemberDialogVisible.value = true
+    })
 }
 
 const handleAddTeacher = () => {
-    addTeacherDialogVisible.value = true
+    axios.get("/api/user/all", {
+        params: {
+            role: '0',
+        }
+    }).then(res => {
+        teacherOptionList.value = res.data.data
+    }).catch(err => {
+        console.log(err)
+    }).finally(() => {
+        addTeacherDialogVisible.value = true
+    })
 }
 
 const getMemberList = (pageNumber: number, role: string) => {
@@ -131,14 +153,13 @@ const getMemberList = (pageNumber: number, role: string) => {
             pageNumber: pageNumber,
             role: role,
         }
-    })
-        .then(res => {
-            memberList.value = res.data
-        }).catch(err => {
-            console.log(err)
-        }).finally(() => {
+    }).then(res => {
+        memberList.value = res.data
+    }).catch(err => {
+        console.log(err)
+    }).finally(() => {
 
-        })
+    })
 }
 
 const getChartData = () => {
@@ -146,22 +167,21 @@ const getChartData = () => {
         params: {
             projectId: projectId.value
         }
+    }).then(res => {
+        var chartData = res.data
+        var nameList = []
+        var scoreList = []
+        for (let i = 0; i < chartData.length; i++) {
+            nameList.push(chartData[i].memberName)
+            scoreList.push(chartData[i].score)
+        }
+        xAxisName.value = [...nameList]
+        yAxisScore.value = [...scoreList]
+    }).catch(err => {
+        console.log(err)
+    }).finally(() => {
+        updateChart()
     })
-        .then(res => {
-            var chartData = res.data
-            var nameList = []
-            var scoreList = []
-            for (let i = 0; i < chartData.length; i++) {
-                nameList.push(chartData[i].memberName)
-                scoreList.push(chartData[i].score)
-            }
-            xAxisName.value = [...nameList]
-            yAxisScore.value = [...scoreList]
-        }).catch(err => {
-            console.log(err)
-        }).finally(() => {
-            updateChart()
-        })
 }
 
 const initChart = () => {
@@ -187,20 +207,22 @@ const initChart = () => {
 
 const updateChart = () => {
     var myChart = echarts.getInstanceByDom(chartRef.value)
-    myChart.setOption({
-        xAxis: {
-            data: xAxisName.value
-        },
-        yAxis: {
-            type: 'value'
-        },
-        series: [
-            {
-                type: 'bar',
-                data: yAxisScore.value
-            }
-        ]
-    })
+    if (myChart) {
+        myChart.setOption({
+            xAxis: {
+                data: xAxisName.value
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [
+                {
+                    type: 'bar',
+                    data: yAxisScore.value
+                }
+            ]
+        })
+    }
 }
 </script>
   

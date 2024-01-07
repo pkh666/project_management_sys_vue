@@ -1,7 +1,7 @@
 <template>
     <el-row>
         <el-col :span="3">
-            <h1>项目列表</h1>
+            <h1 style="color: black;">项目列表</h1>
         </el-col>
         <el-col :span="19">
 

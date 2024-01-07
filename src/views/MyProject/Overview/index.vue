@@ -1,13 +1,14 @@
 <template>
     <div>
         <el-header>
-            <div>
-                <el-steps :active="active" align-center>
-                    <el-step v-for="proj in projectSteps" :title="proj.step" :description="proj.deadline">
-                    </el-step>
-                </el-steps>
-            </div>
+            <el-steps :active="active" align-center>
+                <el-step v-for="proj in projectSteps" :title="proj.step" :description="proj.deadline">
+                </el-step>
+            </el-steps>
         </el-header>
+        <el-main>
+
+        </el-main>
     </div>
 </template>
   
