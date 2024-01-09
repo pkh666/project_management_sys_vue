@@ -32,7 +32,7 @@
     </el-row>
 
   <el-main class="el-main">
-    <el-card class="box-card" @click="goToProject" v-for="(project,id) in  projectList.projectList" :key="id" >
+    <el-card class="box-card" @click="goToProject" v-for="(project,id) in  projectList.projectList.data" :key="id" >
 
       <el-descriptions >
         <el-descriptions-item label=项目名称 class="box">
@@ -58,7 +58,7 @@
       </el-descriptions>
     </el-card>
   </el-main>
-  <el-pagination layout="prev, pager, next" :total="50" v-model:current-page="pageData.pageNum" @current-change="currentPageChange"/>
+  <el-pagination layout="prev, pager, next" :page-count="projectList.projectList.totalPage" v-model:current-page="pageData.pageNum" @current-change="currentPageChange"/>
   <el-row>
     <el-col :span="3">
        <h2>我的动态</h2>
@@ -94,7 +94,7 @@
 
 <script setup lang="ts">
 import axios from 'axios'
-import {reactive} from 'vue'
+import {onMounted, reactive} from 'vue'
 import router from "@/router";
 
 
@@ -151,11 +151,13 @@ function currentPageChange(pageNum){
   axios.get("/api/project", {params:{pageSize:pageData.pageSize,
                                                 pageNum:pageData.pageNum}  }).then(res=>{
     //用户id找到项目id，项目id找到项目
-    projectList.projectList=res.data.data.data
-    console.log(res.data.data.data)
+    projectList.projectList=res.data.data
+    console.log(res.data.data.totalPage)
   })
 }
-
+onMounted(()=>{
+  currentPageChange(1)
+})
 
 
 </script>
