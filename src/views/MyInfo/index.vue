@@ -30,7 +30,7 @@
         </el-main>
     </div>
 </template>
-  
+
 <script lang="ts" setup>
 import { ref, reactive } from 'vue';
 
@@ -43,7 +43,7 @@ const updateMyInfo = () => {
     myInfoDialogVisible.value = true
 }
 </script>
-  
+
 <style lang="css" scoped>
 .box-card {
     display: inline-block;
