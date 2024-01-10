@@ -6,10 +6,10 @@
                     <span style="color: black;">任务列表</span>
                 </el-col>
                 <el-col :span="6">
-                    <el-checkbox v-model="finishedTask" @click="showFinishedTask">显示已完成的任务</el-checkbox>
+                    <el-checkbox v-model="finishedTaskChecked" @click="showFinishedTask">显示已完成的任务</el-checkbox>
                 </el-col>
                 <el-col :span="6">
-                    <el-checkbox v-model="myTask" @click="showMyTask">只看自己负责的任务</el-checkbox>
+                    <el-checkbox v-model="myTaskChecked" @click="showMyTask">只看自己负责的任务</el-checkbox>
                 </el-col>
                 <el-col :span="6">
                     <el-dialog v-model="addListDialogVisible" title="新建任务列表" width="30%">
@@ -30,10 +30,10 @@
             </el-row>
         </el-header>
         <el-main>
-            <el-card class="box-card" v-for="listName, index in listNames">
+            <el-card class="box-card" v-for="item, index in taskLists">
                 <template #header>
                     <div class="card-header">
-                        <span>{{ listName }}</span>
+                        <span>{{ item.listName }}</span>
                         <el-dialog v-model="addTaskDialogVisible" title="新建任务" width="30%">
                             <el-form :model="addTaskForm">
                                 <el-form-item label="任务标题">
@@ -61,40 +61,37 @@
                         <el-button @click="handleAddTask(index)">添加任务</el-button>
                     </div>
                 </template>
-                <el-scrollbar>
-                    <el-card v-for="task, index in taskList">
-                        <div>
-                            <el-checkbox></el-checkbox>
-                            <span>{{ task.name }}</span>
-                        </div>
-                        <el-dialog v-model="taskDetailDialogVisible" title="任务详情" width="30%">
-                            <el-descriptions v-model="taskDetail">
-                                <el-descriptions-item label="任务标题"> {{ taskDetail.name }}</el-descriptions-item>
-                                <el-descriptions-item label="负责人">{{ }}</el-descriptions-item>
-                                <el-descriptions-item label="截止日期">{{ taskDetail.endTime }}</el-descriptions-item>
-                                <el-descriptions-item label="任务描述">{{ taskDetail.desc }}</el-descriptions-item>
-                            </el-descriptions>
-                            <template #footer>
-                                <span class="dialog-footer">
-                                    <el-button @click="taskDetailDialogVisible = false">取消</el-button>
-                                    <el-button type="primary" @click="taskDetailDialogVisible = false">确认</el-button>
-                                </span>
-                            </template>
-                        </el-dialog>
-                        <el-button @click="handleTaskDetailClick(index)">查看详情</el-button>
-                    </el-card>
-                </el-scrollbar>
+                <el-card v-for="task, index in item.tasks">
+                    <div>
+                        <el-checkbox size="large">{{ task.name }}</el-checkbox>
+                    </div>
+                    <el-dialog v-model="taskDetailDialogVisible" title="任务详情" width="30%">
+                        <el-descriptions v-model="taskDetail" :column="1">
+                            <el-descriptions-item label="任务标题"> {{ taskDetail.name }}</el-descriptions-item>
+                            <el-descriptions-item label="负责人">{{ taskDetail.executorId }}</el-descriptions-item>
+                            <el-descriptions-item label="截止日期">{{ taskDetail.endTime }}</el-descriptions-item>
+                            <el-descriptions-item label="任务描述">{{ taskDetail.description }}</el-descriptions-item>
+                        </el-descriptions>
+                        <template #footer>
+                            <span class="dialog-footer">
+                                <el-button @click="taskDetailDialogVisible = false">取消</el-button>
+                                <el-button type="primary" @click="taskDetailDialogVisible = false">确认</el-button>
+                            </span>
+                        </template>
+                    </el-dialog>
+                    <el-button @click="handleTaskDetailClick(index)">查看详情</el-button>
+                </el-card>
             </el-card>
         </el-main>
     </div>
 </template>
   
 <script lang="ts" setup>
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted, reactive, Ref } from 'vue'
 import axios from 'axios'
 
-const finishedTask = ref(false)
-const myTask = ref(false)
+const finishedTaskChecked = ref(false)
+const myTaskChecked = ref(false)
 
 const addListDialogVisible = ref(false)
 const addListForm = reactive({
@@ -112,27 +109,44 @@ const addTaskForm = reactive({
 const taskDetailDialogVisible = ref(false)
 const taskDetail = ref({})
 
-const listNames = ref(['list1', 'list2', 'list3',])
-const taskList = ref([
+const lists = ref([
     {
+        'id': 1,
+        'name': 'A',
+    },
+    {
+        'id': 11,
+        'name': 'B',
+    },
+])
+const tasks = ref([
+    {
+        'listId': 1,
         'name': 'name1',
         'desc': 'desc1',
+        'status': '0',
         "endTime": "2023-12-29"
     },
     {
+        'listId': 1,
         'name': 'name2',
         'desc': 'desc2',
+        'status': '1',
         "endTime": "2023-12-30"
     },
     {
+        'listId': 11,
         'name': 'name3',
         'desc': 'desc3',
+        'status': '0',
         "endTime": "2023-12-31"
     },
 ])
 
+const taskLists: Ref<Array<{ listName: String, tasks: Array<Object> }>> = ref([])
+
 onMounted(() => {
-    getAllTask()
+    getAllList()
 })
 
 const handleAddList = () => {
@@ -144,25 +158,64 @@ const handleAddTask = (index) => {
 }
 
 const handleTaskDetailClick = (index) => {
-    taskDetail.value = taskList.value[index]
+    taskDetail.value = tasks.value[index]
     taskDetailDialogVisible.value = true
 }
 
 const showFinishedTask = () => {
+    if (finishedTaskChecked.value == true) {
 
+    } else {
+
+    }
 }
 
 const showMyTask = () => {
+    if (myTaskChecked.value == true) {
 
+    } else {
+
+    }
+}
+
+const getTaskLists = () => {
+    lists.value.forEach((list) => {
+        var tasksInList = tasks.value.filter((task) => {
+            return task.listId === list.id
+        })
+        if (tasksInList.length > 0) {
+            taskLists.value.push({
+                listName: list.name,
+                tasks: tasksInList
+            })
+        }
+    })
+    console.log(taskLists.value)
 }
 
 const getAllTask = () => {
     axios.get("/api/task/all", {
         params: {
-            executorId: ""
+            executorId: 1
         }
     }).then(res => {
-        console.log(res.data)
+        tasks.value = res.data.data
+        getTaskLists()
+    }).catch(err => {
+        console.log(err)
+    }).finally(() => {
+
+    })
+}
+
+const getAllList = () => {
+    axios.get("/api/task/list/all", {
+        params: {
+            projectId: 1
+        }
+    }).then(res => {
+        lists.value = res.data.data
+        getAllTask()
     }).catch(err => {
         console.log(err)
     }).finally(() => {
@@ -179,7 +232,7 @@ const getAllTask = () => {
 }
 
 .box-card {
-    display: inline-block;
+    display: inline-table;
     width: 480px;
 }
 </style>

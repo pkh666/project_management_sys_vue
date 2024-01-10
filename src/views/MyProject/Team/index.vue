@@ -69,7 +69,7 @@
 </template>
   
 <script lang="ts" setup>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, onUpdated } from 'vue';
 import axios from 'axios';
 import * as echarts from 'echarts'
 
@@ -124,10 +124,11 @@ const handleAddMember = () => {
         }
     }).then(res => {
         memberOptionList.value = res.data.data
+        addMemberDialogVisible.value = true
     }).catch(err => {
         console.log(err)
     }).finally(() => {
-        addMemberDialogVisible.value = true
+
     })
 }
 
@@ -138,10 +139,10 @@ const handleAddTeacher = () => {
         }
     }).then(res => {
         teacherOptionList.value = res.data.data
+        addTeacherDialogVisible.value = true
     }).catch(err => {
         console.log(err)
     }).finally(() => {
-        addTeacherDialogVisible.value = true
     })
 }
 
@@ -177,10 +178,11 @@ const getChartData = () => {
         }
         xAxisName.value = [...nameList]
         yAxisScore.value = [...scoreList]
+        updateChart()
     }).catch(err => {
         console.log(err)
     }).finally(() => {
-        updateChart()
+
     })
 }
 
