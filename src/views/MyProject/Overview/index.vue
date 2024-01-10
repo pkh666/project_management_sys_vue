@@ -30,7 +30,7 @@ import {useRoute, useRouter} from "vue-router";
 import axios from "axios";
 const route = useRoute()
 onBeforeMount( () => {
-
+  console.log(route.query)
 })
 const active = ref(2)
 const projectSteps = ref([

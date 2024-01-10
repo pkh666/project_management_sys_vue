@@ -65,21 +65,20 @@
     </el-col>
     <el-col :span="19" />
     <el-col>
-      <el-card>
+      <el-card v-for="(message,id) in  messageList.messageList" :key="id">
       <el-descriptions >
         <el-descriptions-item >
-          <h4>动态标题</h4>
-          动态内容
+          <h4>{{message.title}}</h4>
+          {{message.content}}
         </el-descriptions-item>
-
       </el-descriptions>
-        <el-descriptions >
-          <el-descriptions-item >
-            <h4>动态标题</h4>
-            动态内容
-          </el-descriptions-item>
+<!--        <el-descriptions >-->
+<!--          <el-descriptions-item >-->
+<!--            <h4>动态标题</h4>-->
+<!--            动态内容-->
+<!--          </el-descriptions-item>-->
 
-        </el-descriptions>
+<!--        </el-descriptions>-->
       </el-card>
 
     </el-col>
@@ -97,6 +96,7 @@ import axios from 'axios'
 import {onMounted, reactive} from 'vue'
 
 import { useRouter} from "vue-router";
+import {state} from "@/store";
 
 const router=useRouter()
 const user=reactive({
@@ -113,14 +113,25 @@ const pageData=reactive(
 const projectList=reactive({
   projectList:[]
 })
+const message={
+projectId:"",
+}
+const messageList=reactive({
+  messageList:[]
+})
 /*用户信息的id参数
 * */
 const params={
   id:1,
 }
 
-
-
+/*请求动态
+* */
+axios.get("/api/message",{params:message}).then(res=>{
+  messageList.messageList=res.data.data.data
+  state.projectid="2"
+ console.log(state.projectid)
+})
 /*获取用户基本信息，存在testRes中
 * */
 axios.get("/api/user",{params})
