@@ -1,14 +1,25 @@
 <template>
-    <div>
-        <el-header>
-            <el-steps :active="active" align-center>
-                <el-step v-for="proj in projectSteps" :title="proj.step" :description="proj.deadline">
-                </el-step>
-            </el-steps>
-        </el-header>
-        <el-main>
+    <div style="height: 100%;">
+        <el-row class="landmark">
+            <el-col :span="24">
+                <el-steps :active="active" align-center>
+                    <el-step v-for="proj in projectSteps" :title="proj.step" :description="proj.deadline">
+                    </el-step>
+                </el-steps>
+            </el-col>
+        </el-row>
+        <el-row class="messageAndInfo">
+            <el-col :span="17" class="message">
 
-        </el-main>
+            </el-col>
+            <el-col :span="1">
+
+            </el-col>
+            <el-col :span="6" class="info">
+
+            </el-col>
+        </el-row>
+
     </div>
 </template>
   
@@ -36,4 +47,63 @@ const projectSteps = ref([
 ])
 </script>
   
-<style lang="css" scoped></style>
+<style lang="scss" scoped>
+.landmark {
+    width: 98%;
+    background-color: #fff;
+    border-radius: 30px;
+    padding: 20px;
+    min-height: 20%;
+    margin: auto;
+}
+
+.messageAndInfo {
+    width: 98%;
+    border-radius: 30px;
+    padding: 20px;
+    height: 77%;
+    margin: auto;
+    margin-top: 1%;
+}
+
+.message {
+    background-color: #fff;
+    border-radius: 30px;
+    padding: 20px;
+    height: 100%;
+    margin: auto;
+}
+.info {
+    background-color: #fff;
+    border-radius: 30px;
+    padding: 20px;
+    height: 100%;
+    margin: auto;
+}
+
+// 水平垂直居中
+.center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+// 元素靠右
+.right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+// 元素靠左
+.left {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+// 上方间距
+.mt {
+    margin-top: 20px;
+}
+</style>
