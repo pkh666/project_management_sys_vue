@@ -21,23 +21,23 @@
                         <template #footer>
                             <span class="dialog-footer">
                                 <el-button @click="addListDialogVisible = false">取消</el-button>
-                                <el-button type="primary" @click="addListDialogVisible = false">确认</el-button>
+                                <el-button type="primary" @click="confirmAddList">确认</el-button>
                             </span>
                         </template>
                     </el-dialog>
-                    <el-button @click="handleAddList" type="primary">新建任务列表</el-button>
+                    <el-button @click="handleAddListClick" type="primary">新建任务列表</el-button>
                 </el-col>
             </el-row>
         </el-header>
         <el-main>
-            <el-card class="box-card" v-for="item, index in taskLists">
+            <el-card class="box-card" v-for="item, listIndex in taskLists">
                 <template #header>
                     <div class="card-header">
                         <span>{{ item.listName }}</span>
                         <el-dialog v-model="addTaskDialogVisible" title="新建任务" width="30%">
                             <el-form :model="addTaskForm">
                                 <el-form-item label="任务标题">
-                                    <el-input v-model="addTaskForm.title" placeholder="输入任务标题"></el-input>
+                                    <el-input v-model="addTaskForm.name" placeholder="输入任务标题"></el-input>
                                 </el-form-item>
                                 <el-form-item label="负责人">
                                     <el-select v-model="addTaskForm.executor" placeholder="选择负责人">
@@ -45,7 +45,7 @@
                                     </el-select>
                                 </el-form-item>
                                 <el-form-item label="截止日期">
-                                    <el-date-picker v-model="addTaskForm" type="date" placeholder="选择截止日期" />
+                                    <el-date-picker v-model="addTaskForm.endTime" type="datetime" placeholder="选择截止日期" />
                                 </el-form-item>
                                 <el-form-item label="任务描述">
                                     <el-input v-model="addTaskForm.description" placeholder="输入任务描述"></el-input>
@@ -54,14 +54,14 @@
                             <template #footer>
                                 <span class="dialog-footer">
                                     <el-button @click="addTaskDialogVisible = false">取消</el-button>
-                                    <el-button type="primary" @click="addTaskDialogVisible = false">确认</el-button>
+                                    <el-button type="primary" @click="confirmAddTask">确认</el-button>
                                 </span>
                             </template>
                         </el-dialog>
-                        <el-button @click="handleAddTask(index)">添加任务</el-button>
+                        <el-button type="primary" @click="handleAddTaskClick(listIndex)">添加任务</el-button>
                     </div>
                 </template>
-                <el-card v-for="task, index in item.tasks">
+                <el-card v-for="task, taskIndex in item.tasks">
                     <div>
                         <el-checkbox size="large">{{ task.name }}</el-checkbox>
                     </div>
@@ -79,7 +79,8 @@
                             </span>
                         </template>
                     </el-dialog>
-                    <el-button @click="handleTaskDetailClick(index)">查看详情</el-button>
+                    <el-button type="info" @click="handleShowDetailClick(listIndex, taskIndex)">查看详情</el-button>
+                    <el-button type="danger" @click="handleDeleteTaskClick(taskIndex)">删除任务</el-button>
                 </el-card>
             </el-card>
         </el-main>
@@ -87,7 +88,7 @@
 </template>
   
 <script lang="ts" setup>
-import { ref, onMounted, reactive, Ref } from 'vue'
+import { ref, onMounted, reactive, Ref, onUpdated } from 'vue'
 import axios from 'axios'
 
 const finishedTaskChecked = ref(false)
@@ -97,14 +98,23 @@ const addListDialogVisible = ref(false)
 const addListForm = reactive({
     name: ""
 })
+const clearAddListForm = () => {
+    addListForm.name = ""
+}
 
 const addTaskDialogVisible = ref(false)
 const addTaskForm = reactive({
-    title: "",
+    name: "",
     executor: "",
     endTime: "",
     description: "",
 })
+const clearAddTaskForm = () => {
+    addTaskForm.name = ""
+    addTaskForm.executor = ""
+    addTaskForm.endTime = ""
+    addTaskForm.description = ""
+}
 
 const taskDetailDialogVisible = ref(false)
 const taskDetail = ref({})
@@ -143,35 +153,75 @@ const tasks = ref([
     },
 ])
 
-const taskLists: Ref<Array<{ listName: String, tasks: Array<Object> }>> = ref([])
+const taskLists: Ref<Array<Object>> = ref([])
 
 onMounted(() => {
     getAllList()
 })
 
-const handleAddList = () => {
+const confirmAddList = () => {
+    axios.post('/api/task/list', {
+        "name": addListForm.name,
+        "projectId": 1
+    }).then((res) => {
+        console.log(res)
+    }).catch((err) => {
+        console.error(err)
+    }).finally(() => {
+        addListDialogVisible.value = false
+        getAllList()
+    })
+}
+
+const chosenList = ref(-1)
+
+const confirmAddTask = () => {
+    axios.post('/api/task', {
+        listId: chosenList.value,
+        name: addTaskForm.name,
+        description: addTaskForm.description,
+        endTime: addTaskForm.endTime,
+        executorId: 1
+    }).then((res) => {
+        console.log(res)
+    }).catch((err) => {
+        console.error(err)
+    }).finally(() => {
+        addTaskDialogVisible.value = false
+        getAllTask('')
+    })
+}
+
+const handleAddListClick = () => {
+    clearAddListForm()
     addListDialogVisible.value = true
 }
 
-const handleAddTask = (index) => {
+const handleAddTaskClick = (index) => {
+    clearAddTaskForm()
     addTaskDialogVisible.value = true
+    chosenList.value = lists.value[index].id
 }
 
-const handleTaskDetailClick = (index) => {
-    taskDetail.value = tasks.value[index]
+const handleShowDetailClick = (listIndex: number, taskIndex: number) => {
+    taskDetail.value = taskLists.value[listIndex].tasks[taskIndex]
     taskDetailDialogVisible.value = true
 }
 
+const handleDeleteTaskClick = (index) => {
+
+}
+
 const showFinishedTask = () => {
-    if (finishedTaskChecked.value == true) {
-
+    if (finishedTaskChecked.value == false) {
+        getAllTask('1')
     } else {
-
+        getAllTask('')
     }
 }
 
 const showMyTask = () => {
-    if (myTaskChecked.value == true) {
+    if (myTaskChecked.value == false) {
 
     } else {
 
@@ -179,30 +229,30 @@ const showMyTask = () => {
 }
 
 const getTaskLists = () => {
+    taskLists.value = []
     lists.value.forEach((list) => {
         var tasksInList = tasks.value.filter((task) => {
             return task.listId === list.id
         })
-        if (tasksInList.length > 0) {
-            taskLists.value.push({
-                listName: list.name,
-                tasks: tasksInList
-            })
-        }
+        taskLists.value.push({
+            listName: list.name,
+            tasks: tasksInList
+        })
     })
     console.log(taskLists.value)
 }
 
-const getAllTask = () => {
+const getAllTask = (status) => {
     axios.get("/api/task/all", {
         params: {
-            executorId: 1
+            executorId: 1,
+            status: status
         }
     }).then(res => {
         tasks.value = res.data.data
         getTaskLists()
     }).catch(err => {
-        console.log(err)
+        console.error(err)
     }).finally(() => {
 
     })
@@ -215,9 +265,9 @@ const getAllList = () => {
         }
     }).then(res => {
         lists.value = res.data.data
-        getAllTask()
+        getAllTask('')
     }).catch(err => {
-        console.log(err)
+        console.error(err)
     }).finally(() => {
 
     })

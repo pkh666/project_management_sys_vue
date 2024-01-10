@@ -50,8 +50,8 @@
                             </span>
                         </template>
                     </el-dialog>
-                    <el-button type="primary" @click="handleAddMember">添加成员</el-button>
-                    <el-button type="primary" @click="handleAddTeacher">添加指导老师</el-button>
+                    <el-button type="primary" @click="handleAddMemberClick">添加成员</el-button>
+                    <el-button type="primary" @click="handleAddTeacherClick">添加指导老师</el-button>
                 </el-col>
             </el-row>
         </el-header>
@@ -63,13 +63,14 @@
                 <el-table-column prop="phone" label="手机号"></el-table-column>
                 <el-table-column prop="score" label="贡献度"></el-table-column>
             </el-table>
+            <el-pagination layout="prev, pager, next" :total="50" />
             <div id="chart" ref="chartRef" style="width: 100%; height: 400%"></div>
         </el-main>
     </div>
 </template>
   
 <script lang="ts" setup>
-import { ref, reactive, onMounted, onUpdated } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import axios from 'axios';
 import * as echarts from 'echarts'
 
@@ -117,32 +118,31 @@ const handleSearchName = () => {
     getMemberList(1, chosenRole.value)
 }
 
-const handleAddMember = () => {
+const handleAddMemberClick = () => {
     axios.get("/api/user/all", {
         params: {
             role: '1',
         }
     }).then(res => {
         memberOptionList.value = res.data.data
-        addMemberDialogVisible.value = true
     }).catch(err => {
-        console.log(err)
+        console.error(err)
     }).finally(() => {
-
+        addMemberDialogVisible.value = true
     })
 }
 
-const handleAddTeacher = () => {
+const handleAddTeacherClick = () => {
     axios.get("/api/user/all", {
         params: {
             role: '0',
         }
     }).then(res => {
         teacherOptionList.value = res.data.data
-        addTeacherDialogVisible.value = true
     }).catch(err => {
-        console.log(err)
+        console.error(err)
     }).finally(() => {
+        addTeacherDialogVisible.value = true
     })
 }
 
@@ -157,7 +157,7 @@ const getMemberList = (pageNumber: number, role: string) => {
     }).then(res => {
         memberList.value = res.data
     }).catch(err => {
-        console.log(err)
+        console.error(err)
     }).finally(() => {
 
     })
@@ -180,7 +180,7 @@ const getChartData = () => {
         yAxisScore.value = [...scoreList]
         updateChart()
     }).catch(err => {
-        console.log(err)
+        console.error(err)
     }).finally(() => {
 
     })

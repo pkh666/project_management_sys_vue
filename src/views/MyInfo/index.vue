@@ -75,10 +75,9 @@ const getMyInfo = () => {
             id: 1
         }
     }).then(res => {
-        console.log(res.data)
         myInfo.value = res.data.data
     }).catch(err => {
-        console.log(err)
+        console.error(err)
     }).finally(() => {
 
     })
@@ -93,7 +92,7 @@ const getMyProjects = () => {
         console.log(res.data)
         myProjects.value = res.data
     }).catch(err => {
-        console.log(err)
+        console.error(err)
     }).finally(() => {
 
     })
