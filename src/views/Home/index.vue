@@ -118,6 +118,7 @@ const projectList = reactive({
 })
 const message = {
   projectId: "",
+  userId: 1,
 }
 const messageList = reactive({
   messageList: []
@@ -132,8 +133,8 @@ const params = {
 * */
 axios.get("/api/message", { params: message }).then(res => {
   messageList.messageList = res.data.data.data
-  state.projectid = "2"
-  console.log(state.projectid)
+
+
 })
 /*获取用户基本信息，存在testRes中
 * */
