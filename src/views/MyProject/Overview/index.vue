@@ -11,10 +11,16 @@
         </el-main>
     </div>
 </template>
-  
-<script lang="ts" setup>
-import { ref } from 'vue'
 
+<script lang="ts" setup>
+import {onBeforeMount, onMounted, ref} from 'vue'
+import router from "@/router";
+import {useRoute, useRouter} from "vue-router";
+import axios from "axios";
+const route = useRoute()
+onBeforeMount( () => {
+
+})
 const active = ref(2)
 const projectSteps = ref([
     {
@@ -34,6 +40,9 @@ const projectSteps = ref([
         "deadline": "2023.12.1"
     }
 ])
+
+
+
 </script>
-  
+
 <style lang="css" scoped></style>

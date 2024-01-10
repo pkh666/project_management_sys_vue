@@ -32,7 +32,7 @@
     </el-row>
 
   <el-main class="el-main">
-    <el-card class="box-card" @click="goToProject" v-for="(project,id) in  projectList.projectList.data" :key="id" >
+    <el-card class="box-card" @click="goToProject(project)" v-for="(project,id) in  projectList.projectList.data" :key="id" >
 
       <el-descriptions >
         <el-descriptions-item label=项目名称 class="box">
@@ -92,12 +92,13 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" >
 import axios from 'axios'
 import {onMounted, reactive} from 'vue'
-import router from "@/router";
 
+import { useRouter} from "vue-router";
 
+const router=useRouter()
 const user=reactive({
   user:"hello"
 })
@@ -141,8 +142,12 @@ function goToMyProjectAll(){
  router.push("/myProject")
 }
 //跳转到选择的项目概览
-function goToProject(){
-  router.push("/myProject/overview")
+
+function goToProject(project){
+
+
+  router.push({name:"项目概览",
+                query:{projectId:project.id}})
 }
 //改变页码后调整传参数据，并发送一次请求
 function currentPageChange(pageNum){
@@ -156,6 +161,7 @@ function currentPageChange(pageNum){
   })
 }
 onMounted(()=>{
+
   currentPageChange(1)
 })
 
