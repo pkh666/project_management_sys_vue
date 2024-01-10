@@ -10,11 +10,29 @@
         </el-row>
         <el-row class="messageAndInfo">
             <el-col :span="17" class="message">
+              <el-col :span="3">
+                <h2>我的动态</h2>
+              </el-col>
+              <el-col :span="19" />
+              <el-col>
+              <el-descriptions v-for="(message, id) in  messageList.messageList" :key="id">
+
+                    <el-descriptions-item>
+                      <h4>{{ message.title }}</h4>
+                      {{ message.content }}
+                      <el-divider />
+                    </el-descriptions-item>
+
+                  </el-descriptions>
+
+              </el-col>
 
             </el-col>
+
             <el-col :span="1">
 
             </el-col>
+
             <el-col :span="6" class="info">
                 <div class="project-details">
                     <h3 class="project-title left">{{ projectInfo.name }}</h3>
@@ -38,12 +56,18 @@
 </template>
 
 <script lang="ts" setup>
-import { onBeforeMount, onMounted, ref } from 'vue'
+import {onBeforeMount, onMounted, reactive, ref} from 'vue'
 import router from "@/router";
 import { useRoute, useRouter } from "vue-router";
 import axios from "axios";
 import { ElMessage } from 'element-plus';
-
+const message = {
+  projectId: "1",
+  userId: "",
+}
+const messageList = reactive({
+  messageList: []
+})
 const projectId = ref('1'); // 假设已经有一个方法来设置这个项目ID
 const projectInfo = ref({
     name: '项目名称',
@@ -60,7 +84,12 @@ const projectStatistics = ref([
     { name: '逾期任务', score: 100 },
     { name: '里程碑进度', score: 10 / 10 }
 ]);
+//请求动态
+axios.get("/api/message", { params: message }).then(res => {
+  messageList.messageList = res.data.data.data
 
+
+})
 const fetchProjectInfo = async () => {
     try {
         const response = await axios.get('/api/project/info', { params: { id: projectId.value } });
