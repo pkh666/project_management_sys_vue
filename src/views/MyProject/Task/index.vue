@@ -38,13 +38,10 @@
                             <el-dialog v-model="addTaskDialogVisible" title="新建任务" width="30%">
                                 <el-form :model="addTaskForm">
                                     <el-form-item label="任务标题">
-                                        <el-input v-model="addTaskForm.name" placeholder="输入任务标题"></el-input>
+                                        <el-input v-model="addTaskForm.name" placeholder="输入任务标题" />
                                     </el-form-item>
                                     <el-form-item label="负责人">
-                                        <el-select v-model="addTaskForm.executor" placeholder="选择负责人">
-                                            <el-option v-for="user in executorOptionList" :key="user.username"
-                                                :value="user.id" />
-                                        </el-select>
+                                        <el-input v-model="addTaskForm.executor" placeholder="输入负责人" />
                                     </el-form-item>
                                     <el-form-item label="截止日期">
                                         <el-date-picker v-model="addTaskForm.endTime" type="datetime"
@@ -189,7 +186,7 @@ const confirmAddTask = () => {
         name: addTaskForm.name,
         description: addTaskForm.description,
         endTime: addTaskForm.endTime,
-        executorId: 1
+        executorId: addTaskForm.executor
     }).then((res) => {
         console.log(res)
     }).catch((err) => {
