@@ -21,9 +21,7 @@
                     <el-dialog v-model="addMemberDialogVisible" title="添加成员" width="30%">
                         <el-form :model="addMemberForm">
                             <el-form-item label="姓名" :label-width="formLabelWidth">
-                                <el-select v-model="addMemberForm.id" placeholder="选择成员姓名">
-                                    <el-option v-for="user in memberOptionList" :lable="user.username" :value="user.id" />
-                                </el-select>
+                                <el-input v-model="addMemberForm.id" placeholder="输入成员姓名"></el-input>
                             </el-form-item>
                         </el-form>
                         <template #footer>
