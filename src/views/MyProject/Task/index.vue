@@ -3,7 +3,7 @@
         <el-header>
             <el-row>
                 <el-col :span="6">
-                    <span style="color: black;">任务列表</span>
+                    <h1 style="color: black;">任务列表</h1>
                 </el-col>
                 <el-col :span="6">
                     <el-checkbox v-model="finishedTaskChecked" @click="showFinishedTask">显示已完成的任务</el-checkbox>
@@ -29,8 +29,10 @@
                 </el-col>
             </el-row>
         </el-header>
-        <el-main>
-            <el-scrollbar>
+
+        <!-- 横向滚动条 -->
+        <el-scrollbar style="height: 730px;">
+            <div style="width: 100%" class="left">
                 <el-card class="box-card" v-for="item, listIndex in taskLists">
                     <template #header>
                         <div class="card-header">
@@ -64,10 +66,11 @@
                             <el-button type="primary" @click="handleAddTaskClick(listIndex)">添加任务</el-button>
                         </div>
                     </template>
-                    <el-scrollbar height="400px">
+                    <el-scrollbar height="560px">
                         <el-card v-for="task, taskIndex in item.tasks">
-                            <div>
-                                <el-checkbox size="large">{{ task.name }}</el-checkbox>
+                            <div >
+                                <el-checkbox size="large" class="left">{{ task.name }}</el-checkbox>
+                                <text class="left">{{ task.description }}</text>
                             </div>
                             <el-dialog v-model="taskDetailDialogVisible" title="任务详情" width="30%">
                                 <el-descriptions v-model="taskDetail" :column="1">
@@ -83,13 +86,17 @@
                                     </span>
                                 </template>
                             </el-dialog>
-                            <el-button type="info" @click="handleShowDetailClick(listIndex, taskIndex)">查看详情</el-button>
-                            <el-button type="danger" @click="handleDeleteTaskClick(taskIndex)">删除任务</el-button>
+                            <el-button type="info" @click="handleShowDetailClick(listIndex, taskIndex)" class="right">查看详情</el-button>
+                            <!-- <el-button type="danger" @click="handleDeleteTaskClick(taskIndex)">删除任务</el-button> -->
                         </el-card>
                     </el-scrollbar>
                 </el-card>
-            </el-scrollbar>
-        </el-main>
+            </div>
+
+        </el-scrollbar>
+
+
+
     </div>
 </template>
   
@@ -289,7 +296,7 @@ const getAllList = () => {
 }
 </script>
   
-<style lang="css" scoped>
+<style lang="scss" scoped>
 .card-header {
     display: flex;
     justify-content: space-between;
@@ -299,5 +306,33 @@ const getAllList = () => {
 .box-card {
     display: inline-block;
     width: 400px;
+    height: 700px;
+    margin: 10px;
+}
+
+// 水平垂直居中
+.center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+// 元素靠右
+.right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+// 元素靠左
+.left {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+// 上方间距
+.mt {
+    margin-top: 20px;
 }
 </style>

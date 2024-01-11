@@ -61,6 +61,8 @@ import router from "@/router";
 import { useRoute, useRouter } from "vue-router";
 import axios from "axios";
 import { ElMessage } from 'element-plus';
+import { state } from "@/store";
+
 const message = {
   projectId: "1",
   userId: "",
@@ -68,7 +70,7 @@ const message = {
 const messageList = reactive({
   messageList: []
 })
-const projectId = ref('1'); // 假设已经有一个方法来设置这个项目ID
+const projectId = state.projectid; // 假设已经有一个方法来设置这个项目ID
 const projectInfo = ref({
     name: '项目名称',
     description: '项目描述',

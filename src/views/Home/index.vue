@@ -117,8 +117,8 @@ const projectList = reactive({
   projectList: []
 })
 const message = {
-  projectId: "",
-  userId: 1,
+  projectid: "",
+  userid: 1,
 }
 const messageList = reactive({
   messageList: []
