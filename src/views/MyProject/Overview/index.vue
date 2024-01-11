@@ -64,8 +64,8 @@ import { ElMessage } from 'element-plus';
 
 const count = ref(0)
 const message = {
-  projectId: "",
-  userId: "1",
+  projectid: "",
+  userid: "1",
 }
 const messageList = reactive({
   messageList: []
