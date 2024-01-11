@@ -14,7 +14,7 @@ interface State {
 
 const state: State = reactive({
   projectid: '1',
-  userId: '-1'
+  userId: '1'
 });
 
 function setProjectId(projectId: string) {

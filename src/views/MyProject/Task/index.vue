@@ -96,6 +96,7 @@
 <script lang="ts" setup>
 import { ref, onMounted, reactive, Ref } from 'vue'
 import axios from 'axios'
+import { state } from '@/store'
 
 const finishedTaskChecked = ref(false)
 const myTaskChecked = ref(false)
@@ -169,7 +170,7 @@ onMounted(() => {
 const confirmAddList = () => {
     axios.post('/api/task/list', {
         name: addListForm.name,
-        projectId: 1
+        projectId: state.projectId
     }).then((res) => {
         console.log(res)
     }).catch((err) => {
@@ -276,7 +277,7 @@ const getAllTask = (status) => {
 const getAllList = () => {
     axios.get("/api/task/list/all", {
         params: {
-            projectId: 1
+            projectId: state.projectid
         }
     }).then(res => {
         lists.value = res.data.data

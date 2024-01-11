@@ -21,25 +21,23 @@
                     <el-dialog v-model="addMemberDialogVisible" title="添加成员" width="30%">
                         <el-form :model="addMemberForm">
                             <el-form-item label="姓名" :label-width="formLabelWidth">
-                                <el-select v-model="addMemberForm.name" placeholder="选择成员姓名">
-                                    <el-option v-for="user in memberOptionList" :key="user.username"
-                                        :value="user.username" />
+                                <el-select v-model="addMemberForm.id" placeholder="选择成员姓名">
+                                    <el-option v-for="user in memberOptionList" :lable="user.username" :value="user.id" />
                                 </el-select>
                             </el-form-item>
                         </el-form>
                         <template #footer>
                             <span class="dialog-footer">
                                 <el-button @click="addMemberDialogVisible = false">取消</el-button>
-                                <el-button type="primary" @click="addMemberDialogVisible = false">确认</el-button>
+                                <el-button type="primary" @click="confirmAddMember">确认</el-button>
                             </span>
                         </template>
                     </el-dialog>
                     <el-dialog v-model="addTeacherDialogVisible" title="添加成员" width="30%">
                         <el-form :model="addTeacherForm">
                             <el-form-item label="姓名" :label-width="formLabelWidth">
-                                <el-select v-model="addTeacherForm.name" placeholder="选择指导老师姓名">
-                                    <el-option v-for="user in teacherOptionList" :key="user.username"
-                                        :value="user.username" />
+                                <el-select v-model="addTeacherForm.id" placeholder="选择指导老师姓名">
+                                    <el-option v-for="user in teacherOptionList" :label="user.username" :value="user.id" />
                                 </el-select>
                             </el-form-item>
                         </el-form>
@@ -73,20 +71,21 @@
 import { ref, reactive, onMounted } from 'vue';
 import axios from 'axios';
 import * as echarts from 'echarts'
+import { state } from "@/store";
+import { ElMessage } from 'element-plus';
 
 const addMemberDialogVisible = ref(false)
 const addTeacherDialogVisible = ref(false)
 const formLabelWidth = '140px'
 
 const addMemberForm = reactive({
-    name: '',
+    id: '',
 })
 const addTeacherForm = reactive({
-    name: '',
+    id: '',
 })
 
 const chosenRole = ref('0')
-const projectId = ref(20)
 const searchName = ref('')
 const memberList = ref([])
 const memberOptionList = ref([])
@@ -118,6 +117,23 @@ const handleSearchName = () => {
     getMemberList(1, chosenRole.value)
 }
 
+const confirmAddMember = () => {
+    axios.post("/api/member", {
+        id: null,
+        projectId: state.projectid,
+        memberId: addMemberForm.id,
+        checkTime: null,
+        score: 0,
+        status: 0
+    }).then((res) => {
+        if (res.data.code == 200) {
+            ElMessage.success("添加成功")
+        }
+    }).finally(() => {
+        addMemberDialogVisible.value = false
+    })
+}
+
 const handleAddMemberClick = () => {
     axios.get("/api/user/all", {
         params: {
@@ -130,6 +146,9 @@ const handleAddMemberClick = () => {
     }).finally(() => {
         addMemberDialogVisible.value = true
     })
+}
+
+const confirmAddTeacher = () => {
 }
 
 const handleAddTeacherClick = () => {
@@ -149,7 +168,7 @@ const handleAddTeacherClick = () => {
 const getMemberList = (pageNumber: number, role: string) => {
     axios.get("/api/member", {
         params: {
-            projectId: projectId.value,
+            projectId: state.projectid,
             memberName: searchName.value,
             pageNumber: pageNumber,
             role: role,
@@ -166,7 +185,7 @@ const getMemberList = (pageNumber: number, role: string) => {
 const getChartData = () => {
     axios.get("/api/member/chart", {
         params: {
-            projectId: projectId.value
+            projectId: state.projectid
         }
     }).then(res => {
         var chartData = res.data
