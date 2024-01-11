@@ -8,16 +8,22 @@ function registerStore(app: App<Element>) {
   app.use(pinia);
 }
 interface State {
-  projectid: string;
+  projectid: string
+  userId: string
 }
 
 const state: State = reactive({
   projectid: '1',
+  userId: '-1'
 });
 
 function setProjectId(projectId: string) {
   state.projectid = projectId;
 }
 
+function setUserId(userId: string) {
+  state.userId = userId;
+}
+
 export default registerStore;
-export { state, setProjectId };
+export { state, setProjectId, setUserId };

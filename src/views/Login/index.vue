@@ -3,6 +3,8 @@ import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { type FormInstance, FormRules, ElMessage } from "element-plus";
 import { User, Lock } from "@element-plus/icons-vue";
+import { setUserId } from '@/store'
+import axios from "axios";
 
 const router = useRouter();
 
@@ -14,8 +16,8 @@ const loading = ref(false);
 
 /** 登录表单数据 */
 const loginFormData = reactive({
-  username: "admin",
-  password: "12345678",
+  username: "",
+  password: "",
   code: "",
 });
 /** 登录表单校验规则 */
@@ -29,51 +31,40 @@ const loginFormRules: FormRules = {
 };
 /** 登录逻辑 */
 const handleLogin = () => {
-  router.push("/home");
-  ElMessage.success("登录成功");
+  axios.post("/api/user/login", {
+    id: null,
+    username: loginFormData.username,
+    password: loginFormData.password,
+    mail: null,
+    phone: null,
+    role: null
+  }).then((res) => {
+    if (res.data.code == 200) {
+      setUserId(res.data.data.id)
+      router.push("/home");
+      ElMessage.success("登录成功");
+    } else {
+      ElMessage.error(res.data.msg);
+    }
+  })
 };
 </script>
 
 <template>
   <div class="login-container">
     <div class="login-card">
-      <div class="title">xxx登录</div>
+      <div class="title">项目管理系统</div>
       <div class="content">
-        <el-form
-          ref="loginFormRef"
-          :model="loginFormData"
-          :rules="loginFormRules"
-          @keyup.enter="handleLogin"
-        >
+        <el-form ref="loginFormRef" :model="loginFormData" :rules="loginFormRules" @keyup.enter="handleLogin">
           <el-form-item prop="username">
-            <el-input
-              v-model.trim="loginFormData.username"
-              placeholder="用户名"
-              type="text"
-              tabindex="1"
-              :prefix-icon="User"
-              size="large"
-            />
+            <el-input v-model.trim="loginFormData.username" placeholder="用户名" type="text" tabindex="1" :prefix-icon="User"
+              size="large" />
           </el-form-item>
           <el-form-item prop="password">
-            <el-input
-              v-model.trim="loginFormData.password"
-              placeholder="密码"
-              type="password"
-              tabindex="2"
-              :prefix-icon="Lock"
-              size="large"
-              show-password
-              style="font-size: 14px"
-            />
+            <el-input v-model.trim="loginFormData.password" placeholder="密码" type="password" tabindex="2"
+              :prefix-icon="Lock" size="large" show-password style="font-size: 14px" />
           </el-form-item>
-          <el-button
-            :loading="loading"
-            type="primary"
-            size="large"
-            @click.prevent="handleLogin"
-            >登 录</el-button
-          >
+          <el-button :loading="loading" type="primary" size="large" @click.prevent="handleLogin">登 录</el-button>
         </el-form>
       </div>
     </div>
@@ -87,18 +78,21 @@ const handleLogin = () => {
   align-items: center;
   width: 100%;
   min-height: 100%;
+
   .theme-switch {
     position: fixed;
     top: 5%;
     right: 5%;
     cursor: pointer;
   }
+
   .login-card {
     width: 480px;
     border-radius: 20px;
     box-shadow: 0 0 10px #dcdfe6;
     background-color: #fff;
     overflow: hidden;
+
     .title {
       display: flex;
       justify-content: center;
@@ -107,17 +101,21 @@ const handleLogin = () => {
       color: #000;
       font-size: 50px;
     }
+
     .titleImg {
       display: flex;
       justify-content: center;
       align-items: center;
       height: 150px;
     }
+
     .content {
       padding: 20px 50px 50px 50px;
+
       :deep(.el-input-group__append) {
         padding: 0;
         overflow: hidden;
+
         .el-image {
           width: 100px;
           height: 40px;
@@ -127,6 +125,7 @@ const handleLogin = () => {
           text-align: center;
         }
       }
+
       .el-button {
         width: 100%;
         margin-top: 10px;

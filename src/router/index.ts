@@ -11,7 +11,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
     component: () => import("../layouts/index.vue"),
-    redirect: "/home",
+    redirect: "/login",
     children: [
       {
         path: "home",

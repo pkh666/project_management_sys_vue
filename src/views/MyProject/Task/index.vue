@@ -168,8 +168,8 @@ onMounted(() => {
 
 const confirmAddList = () => {
     axios.post('/api/task/list', {
-        "name": addListForm.name,
-        "projectId": 1
+        name: addListForm.name,
+        projectId: 1
     }).then((res) => {
         console.log(res)
     }).catch((err) => {
