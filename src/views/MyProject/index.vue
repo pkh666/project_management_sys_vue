@@ -97,6 +97,7 @@
 </template>
 
 <script lang="ts" setup>
+import { state } from '@/store'
 import { ref } from 'vue';
 import axios from 'axios';
 import { onMounted } from 'vue';
@@ -123,9 +124,16 @@ const handleDialogClose = (done) => {
   done();
 };
 
+
+const config = {
+  headers:{
+    userId: state.userId
+  }
+}
+
 const submitForm = async () => {
   try {
-    await axios.post('/api/project', form.value);
+    await axios.post('/api/project', form.value,config);
     ElMessage.success('项目创建成功');
     showDialog.value = false;
     resetForm();
@@ -192,6 +200,8 @@ const tableData = ref([
 
 // 获取列表
 function getInfo(currentPage) {
+    console.log(state.userId);
+    
 
     axios.get('/api/project', {
         params: {
@@ -201,7 +211,8 @@ function getInfo(currentPage) {
             pageNum: currentPage,
             status: status.value
 
-        }
+        },
+        headers:config.headers
     }).then((res) => {
         tableData.value = res.data.data.data;
         totalPage.value = res.data.data.totalPage;
