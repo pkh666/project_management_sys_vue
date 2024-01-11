@@ -40,13 +40,10 @@
                             <el-dialog v-model="addTaskDialogVisible" title="新建任务" width="30%">
                                 <el-form :model="addTaskForm">
                                     <el-form-item label="任务标题">
-                                        <el-input v-model="addTaskForm.name" placeholder="输入任务标题"></el-input>
+                                        <el-input v-model="addTaskForm.name" placeholder="输入任务标题" />
                                     </el-form-item>
                                     <el-form-item label="负责人">
-                                        <el-select v-model="addTaskForm.executor" placeholder="选择负责人">
-                                            <el-option v-for="user in executorOptionList" :key="user.username"
-                                                :value="user.id" />
-                                        </el-select>
+                                        <el-input v-model="addTaskForm.executor" placeholder="输入负责人" />
                                     </el-form-item>
                                     <el-form-item label="截止日期">
                                         <el-date-picker v-model="addTaskForm.endTime" type="datetime"
@@ -103,6 +100,7 @@
 <script lang="ts" setup>
 import { ref, onMounted, reactive, Ref } from 'vue'
 import axios from 'axios'
+import { state } from '@/store'
 
 const finishedTaskChecked = ref(false)
 const myTaskChecked = ref(false)
@@ -176,7 +174,7 @@ onMounted(() => {
 const confirmAddList = () => {
     axios.post('/api/task/list', {
         name: addListForm.name,
-        projectId: 1
+        projectId: state.projectId
     }).then((res) => {
         console.log(res)
     }).catch((err) => {
@@ -195,7 +193,7 @@ const confirmAddTask = () => {
         name: addTaskForm.name,
         description: addTaskForm.description,
         endTime: addTaskForm.endTime,
-        executorId: 1
+        executorId: addTaskForm.executor
     }).then((res) => {
         console.log(res)
     }).catch((err) => {
@@ -283,7 +281,7 @@ const getAllTask = (status) => {
 const getAllList = () => {
     axios.get("/api/task/list/all", {
         params: {
-            projectId: 1
+            projectId: state.projectid
         }
     }).then(res => {
         lists.value = res.data.data

@@ -48,6 +48,7 @@
 <script lang="ts" setup>
 import axios from 'axios';
 import { ref, reactive, onMounted } from 'vue';
+import { state } from '@/store'
 
 const updateMyInfoDialogVisible = ref(false)
 const updateMyInfoForm = reactive({
@@ -72,7 +73,7 @@ onMounted(() => {
 const getMyInfo = () => {
     axios.get("/api/user", {
         params: {
-            id: 1
+            id: state.userId
         }
     }).then(res => {
         myInfo.value = res.data.data
@@ -86,7 +87,7 @@ const getMyInfo = () => {
 const getMyProjects = () => {
     axios.get("/api/member/projects", {
         params: {
-            memberId: 1
+            memberId: state.userId
         }
     }).then(res => {
         console.log(res.data)

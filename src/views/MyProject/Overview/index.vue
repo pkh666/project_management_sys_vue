@@ -9,12 +9,12 @@
             </el-col>
         </el-row>
         <el-row class="messageAndInfo">
-            <el-col :span="17" class="message">
+            <el-col :span="17" class="message" v-infinite-scroll="load"  style="overflow: auto" >
               <el-col :span="3">
                 <h2>我的动态</h2>
               </el-col>
               <el-col :span="19" />
-              <el-col>
+              <el-col >
               <el-descriptions v-for="(message, id) in  messageList.messageList" :key="id">
 
                     <el-descriptions-item>
@@ -62,10 +62,11 @@ import { useRoute, useRouter } from "vue-router";
 import axios from "axios";
 import { ElMessage } from 'element-plus';
 import { state } from "@/store";
+const count = ref(0)
 
 const message = {
-  projectId: "1",
-  userId: "",
+  projectid: "",
+  userid: "1",
 }
 const messageList = reactive({
   messageList: []
@@ -78,6 +79,10 @@ const projectInfo = ref({
     createdAt: '2021-01-01',
 
 });
+//滚动
+const load = () => {
+  count.value += 2
+}
 const projectStatistics = ref([
     { name: '已发布任务', score: 100 },
     { name: '未完成任务', score: 100 },
