@@ -265,7 +265,7 @@ const getTaskLists = () => {
 const getAllTask = (status) => {
     axios.get("/api/task/all", {
         params: {
-            executorId: 1,
+            executorId: "",
             status: status
         }
     }).then(res => {

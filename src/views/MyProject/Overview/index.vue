@@ -9,23 +9,23 @@
             </el-col>
         </el-row>
         <el-row class="messageAndInfo">
-            <el-col :span="17" class="message" v-infinite-scroll="load"  style="overflow: auto" >
-              <el-col :span="3">
-                <h2>我的动态</h2>
-              </el-col>
-              <el-col :span="19" />
-              <el-col >
-              <el-descriptions v-for="(message, id) in  messageList.messageList" :key="id">
+            <el-col :span="17" class="message" v-infinite-scroll="load" style="overflow: auto">
+                <el-col :span="3">
+                    <h2>我的动态</h2>
+                </el-col>
+                <el-col :span="19" />
+                <el-col>
+                    <el-descriptions v-for="(message, id) in  messageList.messageList" :key="id">
 
-                    <el-descriptions-item>
-                      <h4>{{ message.title }}</h4>
-                      {{ message.content }}
-                      <el-divider />
-                    </el-descriptions-item>
+                        <el-descriptions-item>
+                            <h4>{{ message.title }}</h4>
+                            {{ message.content }}
+                            <el-divider />
+                        </el-descriptions-item>
 
-                  </el-descriptions>
+                    </el-descriptions>
 
-              </el-col>
+                </el-col>
 
             </el-col>
 
@@ -56,7 +56,7 @@
 </template>
 
 <script lang="ts" setup>
-import {onBeforeMount, onMounted, reactive, ref} from 'vue'
+import { onBeforeMount, onMounted, reactive, ref } from 'vue'
 import router from "@/router";
 import { useRoute, useRouter } from "vue-router";
 import axios from "axios";
@@ -65,13 +65,13 @@ import { state } from "@/store";
 const count = ref(0)
 
 const message = {
-  projectid: "",
-  userid: "1",
+    projectid: "",
+    userid: "1",
 }
 const messageList = reactive({
-  messageList: []
+    messageList: []
 })
-const projectId = state.projectid; // 假设已经有一个方法来设置这个项目ID
+const projectId = ref('1'); // 假设已经有一个方法来设置这个项目ID
 const projectInfo = ref({
     name: '项目名称',
     description: '项目描述',
@@ -81,7 +81,7 @@ const projectInfo = ref({
 });
 //滚动
 const load = () => {
-  count.value += 2
+    count.value += 2
 }
 const projectStatistics = ref([
     { name: '已发布任务', score: 100 },
@@ -93,13 +93,15 @@ const projectStatistics = ref([
 ]);
 //请求动态
 axios.get("/api/message", { params: message }).then(res => {
-  messageList.messageList = res.data.data.data
+    messageList.messageList = res.data.data.data
 
 
 })
 const fetchProjectInfo = async () => {
     try {
-        const response = await axios.get('/api/project/info', { params: { id: projectId.value } });
+        
+        
+        const response = await axios.get('/api/project/info', { params: { id: state.projectid } });
         projectInfo.value = response.data.data;
     } catch (error) {
         console.error('Error fetching project info:', error);
@@ -129,19 +131,19 @@ const active = ref(2)
 const projectSteps = ref([
     {
         "step": "数据库设计",
+        "deadline": "2022.11.15"
+    },
+    {
+        "step": "接口设计",
         "deadline": "2023.12.1"
     },
     {
-        "step": "数据库设计",
-        "deadline": "2023.12.1"
+        "step": "编码",
+        "deadline": ""
     },
     {
-        "step": "数据库设计",
-        "deadline": "2023.12.1"
-    },
-    {
-        "step": "数据库设计",
-        "deadline": "2023.12.1"
+        "step": "测试",
+        "deadline": ""
     }
 ])
 

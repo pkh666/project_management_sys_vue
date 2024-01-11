@@ -83,7 +83,7 @@ const addTeacherForm = reactive({
     id: '',
 })
 
-const chosenRole = ref('0')
+const chosenRole = ref('1')
 const searchName = ref('')
 const memberList = ref([])
 const memberOptionList = ref([])

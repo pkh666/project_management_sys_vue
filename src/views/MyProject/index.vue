@@ -70,7 +70,7 @@
         </el-row>
         <el-row>
             <el-col :span="24">
-                <el-table :data="tableData" border style="width: 100%" @click="toOverview">
+                <el-table :data="tableData" border style="width: 100%" @row-click="toOverview">
                     <!-- 项目名称列 -->
                     <el-table-column prop="name" label="项目名称" width="450"></el-table-column>
                     <!-- 负责人列 -->
@@ -228,7 +228,7 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 import { state } from '@/store';
 
-const toOverview = (row) => {
+const toOverview = (row, column, event) => {
     router.push({
         path: '/myProject/overview',
     
