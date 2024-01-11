@@ -65,8 +65,14 @@
                     </template>
                     <el-scrollbar height="560px">
                         <el-card v-for="task, taskIndex in item.tasks">
-                            <div >
-                                <el-checkbox size="large" class="left">{{ task.name }}</el-checkbox>
+                            <div>
+                                <el-checkbox size="large" class="left">
+                                    {{ task.name }}
+                                    <span style="color: red;margin: 10px;">
+                                        {{ task.status == "02" ? "今日到期！" : task.status == "03" ? "逾期！" : "" }}
+                                    </span>
+                                </el-checkbox>
+
                                 <text class="left">{{ task.description }}</text>
                             </div>
                             <el-dialog v-model="taskDetailDialogVisible" title="任务详情" width="30%">
@@ -83,7 +89,8 @@
                                     </span>
                                 </template>
                             </el-dialog>
-                            <el-button type="info" @click="handleShowDetailClick(listIndex, taskIndex)" class="right">查看详情</el-button>
+                            <el-button type="info" @click="handleShowDetailClick(listIndex, taskIndex)"
+                                class="right">查看详情</el-button>
                             <!-- <el-button type="danger" @click="handleDeleteTaskClick(taskIndex)">删除任务</el-button> -->
                         </el-card>
                     </el-scrollbar>
