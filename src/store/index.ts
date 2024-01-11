@@ -1,6 +1,6 @@
 import { createPinia } from "pinia";
 import type { App } from "vue";
-import {reactive} from "vue";
+import { reactive } from "vue";
 const pinia = createPinia();
 
 function registerStore(app: App<Element>) {
