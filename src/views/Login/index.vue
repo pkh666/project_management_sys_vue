@@ -24,8 +24,7 @@ const loginFormData = reactive({
 const loginFormRules: FormRules = {
   username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
   password: [
-    { required: true, message: "请输入密码", trigger: "blur" },
-    { min: 8, max: 16, message: "长度在 8 到 16 个字符", trigger: "blur" },
+    { required: true, message: "请输入密码", trigger: "blur" }
   ],
   code: [{ required: true, message: "请输入验证码", trigger: "blur" }],
 };
@@ -40,7 +39,7 @@ const handleLogin = () => {
     role: null
   }).then((res) => {
     if (res.data.code == 200) {
-      setUserId(res.data.data.id)
+      setUserId(res.data.data)
       router.push("/home");
       ElMessage.success("登录成功");
     } else {
